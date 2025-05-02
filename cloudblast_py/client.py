@@ -123,7 +123,13 @@ class CloudBlast:
 
         Args:
             server_id: ID of the server
-            action: Action to perform (e.g., 'start', 'stop', 'restart')
+            action: Action to perform
+                     - start
+                     - reboot
+                     - reset
+                     - shutdown
+                     - kill
+                     - suspend
 
         Returns:
             Dict containing the action result
@@ -155,30 +161,31 @@ class CloudBlast:
             json={"server_id": server_id}
         )
 
-    def add_extra_ip(self, server_id: int) -> Dict:
-        """Add an extra IP to a server.
+    def add_extra_ip(self, server_id: int, extra_ips: int = 1) -> Dict:
+        """Add extra IPs to a server.
 
         Args:
             server_id: ID of the server
+            extra_ips: Number of extra IPs to assign (default: 1)
 
         Returns:
-            Dict containing the IP addition result
+            Dict containing the IP addition result with new addresses
 
         Raises:
             CloudBlastError: If the IP addition fails
         """
-        return self._request(
-            "POST",
-            "/add-extra-ip",
-            json={"server_id": server_id}
-        )
+        data = {
+            "server_id": server_id,
+            "extra_ips": extra_ips
+        }
+        return self._request("POST", "/add-extra-ip", json=data)
 
-    def remove_extra_ip(self, server_id: int, ip_address: str) -> Dict:
+    def remove_extra_ip(self, server_id: int, ip: str) -> Dict:
         """Remove an extra IP from a server.
 
         Args:
             server_id: ID of the server
-            ip_address: IP address to remove
+            ip: IP address to remove
 
         Returns:
             Dict containing the IP removal result
@@ -188,7 +195,7 @@ class CloudBlast:
         """
         data = {
             "server_id": server_id,
-            "ip_address": ip_address
+            "ip": ip
         }
         return self._request("POST", "/remove-extra-ip", json=data)
 
@@ -204,7 +211,11 @@ class CloudBlast:
         Raises:
             CloudBlastError: If the request fails
         """
-        return self._request("GET", f"/servers/details/{server_id}")
+        return self._request(
+            "POST",
+            "/servers/details",
+            json={"server_id": server_id}
+        )
 
     def list_servers(self) -> List[Dict]:
         """Get a list of all servers.
@@ -215,4 +226,4 @@ class CloudBlast:
         Raises:
             CloudBlastError: If the request fails
         """
-        return self._request("GET", "/servers/all")
+        return self._request("POST", "/servers/all", json={})
