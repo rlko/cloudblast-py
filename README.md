@@ -41,7 +41,7 @@ server = client.create_server(
 ## Installation
 
 ```bash
-pip install cloudblast-py
+pip install git+https://github.com/rlko/cloudblast-py.git
 ```
 
 ## Usage
@@ -119,4 +119,4 @@ pip install -e .
 
 ## License
 
-MIT 
+MIT
